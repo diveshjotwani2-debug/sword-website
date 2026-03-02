@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SWORD — Something Is Coming</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Teko:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@100;300;400;700;900&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Anton&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --ink:     #0a0805;
+  --cream:   #f2ead8;
+  --saffron: #e8681a;
+  --grime:   #1c1710;
+  --dust:    #9a8e7a;
+  --white:   #faf6ef;
+  --acid:    #d4f54a;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--ink);
+  color: var(--cream);
+  font-family: 'DM Mono', monospace;
+  overflow-x: hidden;
+  cursor: none;
+}
+/* CUSTOM CURSOR */
+#cursor {
+  position: fixed;
+  width: 12px; height: 12px;
+  background: var(--saffron);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+  transition: width 0.2s, height 0.2s;
+}
+#cursor.big { width: 50px; height: 50px; }
+/* GRAIN */
+.grain {
+  position: fixed; inset: -50%;
+  width: 200%; height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.055;
+  pointer-events: none;
+  z-index: 9997;
+  animation: grainShift 0.5s steps(2) infinite;
+}
+@keyframes grainShift {
+  0%   { transform: translate(0,0); }
+  25%  { transform: translate(-2%,-3%); }
+  50%  { transform: translate(1%,2%); }
+  100% { transform: translate(2%,-1%); }
+}
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 1000; padding: 1.6rem 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 12px;
+  font-family: 'Teko', sans-serif;
+  font-size: 2rem; font-weight: 600;
+  letter-spacing: 0.25em; color: var(--white);
+}
+.nav-brand img { width: 30px; filter: invert(1); opacity: 0.9; }
+.nav-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--saffron);
+  border: 1px solid rgba(232,104,26,0.4); padding: 5px 14px;
+  animation: blink 2.5s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+/* HERO */
+.hero {
+  min-height: 100vh; display: grid; place-items: center;
+  position: relative; overflow: hidden; padding: 6rem 2rem 4rem;
+}
+.deva-bg {
+  position: absolute; inset: 0;
+  display: grid; grid-template-columns: repeat(6, 1fr);
+  overflow: hidden; opacity: 0.04;
+  user-select: none; pointer-events: none;
+}
+.deva-col {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-size: 2.8rem; font-weight: 900;
+  color: var(--cream); line-height: 1.1;
+  overflow: hidden; white-space: nowrap;
+  writing-mode: vertical-lr;
+  animation: driftUp 20s linear infinite;
+}
+.deva-col:nth-child(2){animation-delay:-3s;animation-duration:25s}
+.deva-col:nth-child(3){animation-delay:-7s;animation-duration:18s}
+.deva-col:nth-child(4){animation-delay:-12s;animation-duration:22s}
+.deva-col:nth-child(5){animation-delay:-5s;animation-duration:28s}
+.deva-col:nth-child(6){animation-delay:-15s;animation-duration:16s}
+@keyframes driftUp { from{transform:translateY(0)} to{transform:translateY(-50%)} }
+.hero::before {
+  content: ''; position: absolute;
+  width: 700px; height: 700px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,104,26,0.14) 0%, transparent 65%);
+  top: 50%; left: 50%; transform: translate(-50%,-55%);
+  pointer-events: none;
+}
+.hero-inner {
+  position: relative; z-index: 10;
+  text-align: center; display: flex;
+  flex-direction: column; align-items: center;
+}
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.5em;
+  text-transform: uppercase; color: var(--dust);
+  margin-bottom: 2rem;
+  opacity: 0; animation: riseIn 1s 0.3s ease forwards;
+}
+.hero-logo-wrap {
+  margin-bottom: 1.5rem;
+  opacity: 0; animation: riseIn 1.2s 0.1s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+.hero-logo-wrap img {
+  width: clamp(70px,10vw,110px); filter: invert(1);
+  animation: breathe 5s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%,100%{transform:scale(1) translateY(0);filter:invert(1) drop-shadow(0 0 0px rgba(232,104,26,0))}
+  50%{transform:scale(1.04) translateY(-8px);filter:invert(1) drop-shadow(0 0 30px rgba(232,104,26,0.5))}
+}
+.hero-title {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(100px,22vw,290px);
+  line-height: 0.85; letter-spacing: -0.01em;
+  color: var(--white);
+  opacity: 0; animation: riseIn 1.2s 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+  position: relative;
+}
+.hero-title::after {
+  content: 'SWORD'; position: absolute; left: 5px; top: 5px;
+  color: var(--saffron); z-index: -1; opacity: 0.35;
+}
+.hero-deva-sub {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-size: clamp(18px,3.5vw,42px); font-weight: 100;
+  color: rgba(242,234,216,0.28); letter-spacing: 0.15em; margin-top: 0.5rem;
+  opacity: 0; animation: riseIn 1s 0.8s ease forwards;
+}
+.hero-line {
+  width: clamp(120px,20vw,260px); height: 1px;
+  background: linear-gradient(90deg,transparent,var(--saffron),transparent);
+  margin: 2.5rem 0;
+  opacity: 0; animation: riseIn 1s 1s ease forwards;
+}
+.hero-coming {
+  opacity: 0; animation: riseIn 1s 1.2s ease forwards;
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+}
+.hero-coming-small {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.5em;
+  text-transform: uppercase; color: var(--dust);
+}
+.hero-coming-big {
+  font-family: 'Teko', sans-serif;
+  font-size: clamp(42px,8vw,100px);
+  font-weight: 700; letter-spacing: 0.18em; line-height: 1;
+  background: linear-gradient(135deg, var(--cream) 0%, var(--saffron) 55%, var(--cream) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+/* NOTIFY */
+.notify-wrap {
+  margin-top: 3.5rem;
+  opacity: 0; animation: riseIn 1s 1.4s ease forwards;
+  text-align: center;
+}
+.notify-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.45em;
+  text-transform: uppercase; color: var(--dust); margin-bottom: 1.2rem;
+}
+.notify-row {
+  display: flex; border: 1px solid rgba(232,104,26,0.35);
+  max-width: 420px; margin: 0 auto;
+  background: rgba(255,255,255,0.02); backdrop-filter: blur(4px);
+}
+.notify-row input {
+  flex: 1; background: transparent; border: none;
+  padding: 13px 18px; font-family: 'DM Mono', monospace;
+  font-size: 0.72rem; color: var(--cream); outline: none; letter-spacing: 0.06em;
+}
+.notify-row input::placeholder { color: rgba(154,142,122,0.6); }
+.notify-row button {
+  background: var(--saffron); border: none; padding: 13px 22px;
+  font-family: 'Teko', sans-serif; font-size: 1.2rem;
+  font-weight: 600; letter-spacing: 0.2em; color: var(--ink);
+  cursor: pointer; transition: background 0.2s, padding 0.2s;
+}
+.notify-row button:hover { background: #f07820; padding: 13px 28px; }
+.notify-success {
+  font-family: 'DM Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.3em; color: var(--acid);
+  margin-top: 1rem; display: none; text-transform: uppercase;
+}
+/* SCROLL ARROW */
+.scroll-arrow {
+  position: absolute; bottom: 2.5rem; left: 50%;
+  transform: translateX(-50%); z-index: 10;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  opacity: 0; animation: riseIn 1s 2s ease forwards;
+}
+.scroll-arrow span {
+  font-family: 'DM Mono', monospace; font-size: 0.5rem;
+  letter-spacing: 0.5em; color: var(--dust); text-transform: uppercase;
+}
+.arrow-anim { width: 1px; height: 60px; position: relative; overflow: hidden; }
+.arrow-anim::after {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 1px; height: 100%;
+  background: linear-gradient(180deg, transparent, var(--saffron), transparent);
+  animation: arrowDrop 2s ease infinite;
+}
+@keyframes arrowDrop { 0%{transform:translateY(-100%)} 100%{transform:translateY(200%)} }
+@keyframes riseIn { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:none} }
+/* MARQUEE */
+.marquee-section {
+  overflow: hidden; background: var(--saffron); padding: 1rem 0;
+}
+.marquee-track {
+  display: flex; animation: marqueeGo 30s linear infinite; white-space: nowrap;
+}
+.marquee-item {
+  display: inline-flex; align-items: center; gap: 2.5rem; padding: 0 2.5rem;
+  font-family: 'Teko', sans-serif; font-size: 1.5rem;
+  font-weight: 500; letter-spacing: 0.2em; color: var(--ink); text-transform: uppercase;
+}
+.marquee-dot { width:5px;height:5px;border-radius:50%;background:var(--ink);opacity:0.35;flex-shrink:0; }
+@keyframes marqueeGo { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+/* BENCHMARK */
+.bench-section {
+  padding: clamp(80px,12vw,160px) clamp(20px,6vw,100px);
+  position: relative; overflow: hidden; background: var(--grime);
+}
+.bench-bg-letter {
+  position: absolute; right: -5vw; top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(300px,50vw,700px);
+  color: rgba(255,255,255,0.018); line-height: 1;
+  user-select: none; pointer-events: none;
+}
+.bench-inner { position: relative; z-index: 1; max-width: 1100px; }
+.bench-tag {
+  font-family: 'DM Mono', monospace; font-size: 0.58rem;
+  letter-spacing: 0.5em; text-transform: uppercase;
+  color: var(--saffron); margin-bottom: 1.5rem;
+}
+.bench-title {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(60px,12vw,160px); line-height: 0.88;
+}
+.bench-title em {
+  font-style: normal;
+  -webkit-text-stroke: 1px rgba(242,234,216,0.22);
+  color: transparent;
+}
+.bench-body {
+  max-width: 540px; margin-top: 3rem;
+  font-size: clamp(14px,1.7vw,19px); font-weight: 300;
+  line-height: 1.9; color: rgba(242,234,216,0.48);
+  letter-spacing: 0.02em;
+}
+.bench-body strong { color: var(--cream); font-weight: 400; }
+.names-col {
+  margin-top: 5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.name-row {
+  padding: 1.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  display: flex; align-items: center; gap: 1rem;
+  cursor: default; position: relative; overflow: hidden;
+  transition: padding-left 0.3s ease;
+}
+.name-row::before {
+  content: ''; position: absolute; left:0;top:0;bottom:0;
+  width: 2px; background: var(--saffron);
+  transform: scaleY(0); transition: transform 0.3s ease;
+}
+.name-row:hover::before { transform: scaleY(1); }
+.name-row:hover { padding-left: 1.2rem; }
+.name-text {
+  font-family: 'Teko', sans-serif;
+  font-size: clamp(1.1rem,2.5vw,1.6rem);
+  font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--cream);
+  transition: color 0.2s;
+}
+.name-row:hover .name-text { color: var(--saffron); }
+.name-status {
+  margin-left: auto; font-family: 'DM Mono', monospace;
+  font-size: 0.5rem; letter-spacing: 0.35em;
+  text-transform: uppercase; color: rgba(154,142,122,0.35);
+  padding-right: 1rem;
+}
+/* TIERS */
+.tiers-section {
+  background: var(--ink);
+  padding: clamp(80px,12vw,140px) clamp(20px,6vw,100px);
+  position: relative; overflow: hidden;
+}
+.tiers-section::before {
+  content: ''; position: absolute; bottom:0;left:0;right:0;height:1px;
+  background: linear-gradient(90deg,transparent,rgba(232,104,26,0.3),transparent);
+}
+.tiers-header { margin-bottom: 5rem; }
+.tiers-title {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(50px,10vw,130px); line-height: 0.9;
+}
+.tiers-title .line2 {
+  display: block;
+  -webkit-text-stroke: 1px rgba(242,234,216,0.2); color: transparent;
+}
+.tiers-grid {
+  display: grid; grid-template-columns: repeat(5,1fr);
+  gap: 1px; background: rgba(255,255,255,0.04);
+}
+@media(max-width:768px){.tiers-grid{grid-template-columns:repeat(2,1fr)}}
+.tier-cell {
+  background: var(--ink); padding: 2.5rem 1.5rem;
+  display: flex; flex-direction: column; gap: 1rem;
+  position: relative; overflow: hidden; transition: background 0.3s;
+}
+.tier-cell:hover { background: rgba(232,104,26,0.04); }
+.tier-num {
+  font-family: 'DM Mono', monospace; font-size: 0.55rem;
+  letter-spacing: 0.3em; color: var(--dust); opacity: 0.5;
+}
+.tier-name {
+  font-family: 'Teko', sans-serif;
+  font-size: clamp(1.6rem,3vw,2.4rem); font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; line-height: 1;
+}
+.tier-bar {
+  height: 2px; width: 30%; margin-top: auto;
+  border-radius: 2px; transition: width 0.5s ease;
+}
+.tier-cell:hover .tier-bar { width: 80%; }
+.t1 .tier-name{color:rgba(242,234,216,0.55)} .t1 .tier-bar{background:rgba(242,234,216,0.3)}
+.t2 .tier-name{color:#6ec6ff} .t2 .tier-bar{background:#6ec6ff}
+.t3 .tier-name{color:#ff9147} .t3 .tier-bar{background:#ff9147}
+.t4 .tier-name{color:#f5cc3a} .t4 .tier-bar{background:#f5cc3a}
+.t5 .tier-name{color:#cf9fff;font-size:clamp(1.4rem,2.5vw,2rem)} .t5 .tier-bar{background:#cf9fff}
+.tier-redacted {
+  font-family: 'DM Mono', monospace; font-size: 0.55rem;
+  letter-spacing: 0.2em; color: rgba(154,142,122,0.28);
+  text-transform: uppercase; margin-top: 0.3rem;
+}
+/* CLOSING */
+.closing-section {
+  min-height: 100vh; display: grid; place-items: center;
+  position: relative; overflow: hidden; background: var(--grime); padding: 4rem 2rem;
+}
+.closing-section::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(-55deg,transparent 0,transparent 60px,rgba(232,104,26,0.022) 60px,rgba(232,104,26,0.022) 61px);
+  pointer-events: none;
+}
+.closing-logo {
+  position: absolute; bottom: 4rem; left: 50%;
+  transform: translateX(-50%); opacity: 0.06;
+  user-select: none; pointer-events: none;
+}
+.closing-logo img { width: clamp(100px,16vw,200px); filter: invert(1); }
+.closing-inner {
+  position: relative; z-index: 1;
+  text-align: center; display: flex;
+  flex-direction: column; align-items: center;
+}
+.closing-deva {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-size: clamp(13px,1.8vw,20px); font-weight: 300;
+  color: rgba(242,234,216,0.2); letter-spacing: 0.3em; margin-bottom: 2.5rem;
+}
+.closing-title {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(64px,14vw,190px); line-height: 0.88; text-align: center;
+}
+.closing-title .l1{color:var(--cream)}
+.closing-title .l2{display:block;-webkit-text-stroke:1px rgba(232,104,26,0.45);color:transparent;letter-spacing:0.05em}
+.closing-title .l3{display:block;color:var(--saffron)}
+.closing-sub {
+  font-family: 'DM Mono', monospace; font-size: clamp(0.5rem,1vw,0.72rem);
+  letter-spacing: 0.5em; text-transform: uppercase;
+  color: var(--dust); margin-top: 3rem;
+}
+.social-bar { display:flex;gap:3rem;margin-top:4rem; }
+.social-link {
+  font-family: 'DM Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.35em; text-transform: uppercase;
+  color: var(--dust); text-decoration: none; padding-bottom: 3px;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.social-link:hover { color: var(--saffron); border-color: var(--saffron); }
+footer {
+  background: var(--ink); padding: 1.8rem 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+.footer-brand {
+  font-family: 'Teko', sans-serif; font-size: 1.3rem;
+  font-weight: 600; letter-spacing: 0.25em; color: rgba(242,234,216,0.25);
+}
+.footer-copy {
+  font-family: 'DM Mono', monospace; font-size: 0.52rem;
+  letter-spacing: 0.3em; color: rgba(154,142,122,0.3); text-transform: uppercase;
+}
+/* REVEAL */
+.reveal { opacity:0; transform:translateY(40px); transition:opacity 0.9s ease, transform 0.9s ease; }
+.reveal.visible { opacity:1; transform:none; }
+.reveal-d1{transition-delay:0.15s} .reveal-d2{transition-delay:0.3s} .reveal-d3{transition-delay:0.45s}
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div id="cursor"></div>
+
+<nav>
+  <div class="nav-brand">
+    <img src="/mnt/user-data/uploads/642451729_18039880268552208_1490012698397129799_n.jpg" alt="">
+    SWORD
+  </div>
+  <div class="nav-pill">● INCOMING</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="deva-bg">
+    <div class="deva-col">स्वर्ड गली हिप हॉप असली दिल्ली मुंबई स्वर्ड गली हिप हॉप असली दिल्ली मुंबई स्वर्ड गली हिप हॉप असली दिल्ली मुंबई स्वर्ड</div>
+    <div class="deva-col">असली तलवार रैप गली हिप हॉप दिल्ली असली तलवार रैप गली हिप हॉप दिल्ली असली तलवार रैप गली हिप हॉप दिल्ली</div>
+    <div class="deva-col">हिप हॉप संस्कृति तलवार गली हिप हॉप संस्कृति तलवार गली हिप हॉप संस्कृति तलवार गली हिप हॉप संस्कृति</div>
+    <div class="deva-col">मुंबई दिल्ली स्वर्ड असली रैप मुंबई दिल्ली स्वर्ड असली रैप मुंबई दिल्ली स्वर्ड असली रैप मुंबई</div>
+    <div class="deva-col">तलवार गली हिप हॉप असली तलवार गली हिप हॉप असली तलवार गली हिप हॉप असली तलवार गली हिप हॉप</div>
+    <div class="deva-col">स्वर्ड रैप दिल्ली मुंबई असली स्वर्ड रैप दिल्ली मुंबई असली स्वर्ड रैप दिल्ली मुंबई असली स्वर्ड</div>
+  </div>
+
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Est. 2025 — Born in India</p>
+    <div class="hero-logo-wrap">
+      <img src="/mnt/user-data/uploads/642451729_18039880268552208_1490012698397129799_n.jpg" alt="SWORD">
+    </div>
+    <h1 class="hero-title">SWORD</h1>
+    <p class="hero-deva-sub">तलवार</p>
+    <div class="hero-line"></div>
+    <div class="hero-coming">
+      <span class="hero-coming-small">Something Is Being Forged</span>
+      <div class="hero-coming-big">COMING SOON</div>
+    </div>
+    <div class="notify-wrap">
+      <p class="notify-label">Be the first to know. Stay ready.</p>
+      <div class="notify-row">
+        <input type="email" id="emailInput" placeholder="enter your email" />
+        <button onclick="doNotify()">JOIN</button>
+      </div>
+      <p class="notify-success" id="successMsg">✦ locked in. we'll hit you when it drops. ✦</p>
+    </div>
+  </div>
+
+  <div class="scroll-arrow">
+    <span>Scroll</span>
+    <div class="arrow-anim"></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section" aria-hidden="true">
+  <div class="marquee-track">
+    <div class="marquee-item">SEEDHE MAUT<span class="marquee-dot"></span></div>
+    <div class="marquee-item">DIVINE<span class="marquee-dot"></span></div>
+    <div class="marquee-item">EMIWAY<span class="marquee-dot"></span></div>
+    <div class="marquee-item">KR$NA<span class="marquee-dot"></span></div>
+    <div class="marquee-item">MC STAN<span class="marquee-dot"></span></div>
+    <div class="marquee-item">FRAPPE ASH<span class="marquee-dot"></span></div>
+    <div class="marquee-item">PRABH DEEP<span class="marquee-dot"></span></div>
+    <div class="marquee-item">KAAM BHAARI<span class="marquee-dot"></span></div>
+    <div class="marquee-item">MUHFAAD<span class="marquee-dot"></span></div>
+    <div class="marquee-item">DINO JAMES<span class="marquee-dot"></span></div>
+    <div class="marquee-item">SEEDHE MAUT<span class="marquee-dot"></span></div>
+    <div class="marquee-item">DIVINE<span class="marquee-dot"></span></div>
+    <div class="marquee-item">EMIWAY<span class="marquee-dot"></span></div>
+    <div class="marquee-item">KR$NA<span class="marquee-dot"></span></div>
+    <div class="marquee-item">MC STAN<span class="marquee-dot"></span></div>
+    <div class="marquee-item">FRAPPE ASH<span class="marquee-dot"></span></div>
+    <div class="marquee-item">PRABH DEEP<span class="marquee-dot"></span></div>
+    <div class="marquee-item">KAAM BHAARI<span class="marquee-dot"></span></div>
+    <div class="marquee-item">MUHFAAD<span class="marquee-dot"></span></div>
+    <div class="marquee-item">DINO JAMES<span class="marquee-dot"></span></div>
+  </div>
+</div>
+
+<!-- BENCHMARK -->
+<section class="bench-section">
+  <div class="bench-bg-letter">B</div>
+  <div class="bench-inner">
+    <p class="bench-tag reveal">Category 00 — The Standard Above All</p>
+    <h2 class="bench-title reveal reveal-d1">
+      BENCH<br><em>MARK</em>
+    </h2>
+    <p class="bench-body reveal reveal-d2">
+      Kuch logon ne sirf music nahi banaya —<br>
+      <strong>unhone apna khud ka standard set kiya.</strong><br><br>
+      BENCHMARK woh jagah hai jahan sirf woh artists hain
+      jo apni lane khud banate hain. Jo scene ko define karte hain.
+      <strong>Inhe koi category nahi chahiye — yeh khud ek category hain.</strong>
+    </p>
+    <div class="names-col reveal reveal-d3">
+      <div class="name-row"><span class="name-text">Seedhe Maut</span><span class="name-status">Classified</span></div>
+      <div class="name-row"><span class="name-text">DIVINE</span><span class="name-status">Classified</span></div>
+      <div class="name-row"><span class="name-text">Emiway Bantai</span><span class="name-status">Classified</span></div>
+      <div class="name-row"><span class="name-text">KR$NA</span><span class="name-status">Classified</span></div>
+      <div class="name-row"><span class="name-text">MC STAN</span><span class="name-status">Classified</span></div>
+      <div class="name-row"><span class="name-text">Frappe Ash</span><span class="name-status">Classified</span></div>
+      <div class="name-row"><span class="name-text">Prabh Deep</span><span class="name-status">Classified</span></div>
+      <div class="name-row"><span class="name-text">Kaam Bhaari</span><span class="name-status">Classified</span></div>
+      <div class="name-row"><span class="name-text">Muhfaad</span><span class="name-status">Classified</span></div>
+      <div class="name-row"><span class="name-text">Dino James</span><span class="name-status">Classified</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- TIERS -->
+<section class="tiers-section">
+  <div class="tiers-header">
+    <p class="bench-tag reveal">The Hierarchy — 5 Levels</p>
+    <h2 class="tiers-title reveal reveal-d1">
+      THE<br><span class="line2">LEVELS</span>
+    </h2>
+  </div>
+  <div class="tiers-grid reveal">
+    <div class="tier-cell t1">
+      <span class="tier-num">01</span>
+      <div class="tier-name">Basic</div>
+      <div class="tier-redacted">Details sealed</div>
+      <div class="tier-bar"></div>
+    </div>
+    <div class="tier-cell t2">
+      <span class="tier-num">02</span>
+      <div class="tier-name">Spotlight</div>
+      <div class="tier-redacted">Details sealed</div>
+      <div class="tier-bar"></div>
+    </div>
+    <div class="tier-cell t3">
+      <span class="tier-num">03</span>
+      <div class="tier-name">Iconic</div>
+      <div class="tier-redacted">Details sealed</div>
+      <div class="tier-bar"></div>
+    </div>
+    <div class="tier-cell t4">
+      <span class="tier-num">04</span>
+      <div class="tier-name">Goated</div>
+      <div class="tier-redacted">Details sealed</div>
+      <div class="tier-bar"></div>
+    </div>
+    <div class="tier-cell t5">
+      <span class="tier-num">05</span>
+      <div class="tier-name">Mythical</div>
+      <div class="tier-redacted">Details sealed</div>
+      <div class="tier-bar"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing-section">
+  <div class="closing-logo">
+    <img src="/mnt/user-data/uploads/642451729_18039880268552208_1490012698397129799_n.jpg" alt="">
+  </div>
+  <div class="closing-inner">
+    <p class="closing-deva">असली हिप हॉप — असली पहचान</p>
+    <h2 class="closing-title">
+      <span class="l1">THE GULLY</span>
+      <span class="l2">GETS ITS</span>
+      <span class="l3">MOMENT</span>
+    </h2>
+    <p class="closing-sub">Kuch bhi mat bolo — SWORD aa raha hai.</p>
+    <div class="social-bar">
+      <a href="#" class="social-link">Instagram</a>
+      <a href="#" class="social-link">Twitter / X</a>
+      <a href="#" class="social-link">YouTube</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-brand">SWORD</span>
+  <span class="footer-copy">© 2025 SWORD — All Rights Reserved</span>
+</footer>
+
+<script>
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top  = e.clientY + 'px';
+});
+document.querySelectorAll('a,button,.name-row,.tier-cell').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+});
+
+   else {
+    el.style.color = 'var(--saffron)';
+    el.placeholder = 'enter a valid email.';
+    setTimeout(() => { el.style.color=''; el.placeholder='enter your email'; }, 1500);
+}
+document.getElementById('emailInput').addEventListener('keydown', e => { if(e.key==='Enter') doNotify(); });
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "PASTE_YOURS",
+    authDomain: "PASTE_YOURS",
+    projectId: "PASTE_YOURS",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.doNotify = async function () {
+    const el = document.getElementById("emailInput");
+    const msg = document.getElementById("successMsg");
+
+    if (el.value && el.value.includes("@")) {
+      await addDoc(collection(db, "emails"), {
+        email: el.value,
+        createdAt: new Date()
+      });
+
+      msg.style.display = "block";
+      el.value = "";
+    } else {
+      alert("Enter valid email");
+    }
+  };
+</script>
+</body>
+</html>
